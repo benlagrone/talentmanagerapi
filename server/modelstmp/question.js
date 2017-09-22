@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
             as: 'Answers',
           });
           Question.belongsToMany(models.Answer, {
-            through: 'question_answers',
+            through: 'question_answer',
             as: 'Answer',
           });
           Question.belongsToMany(models.Type, {

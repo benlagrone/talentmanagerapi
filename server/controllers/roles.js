@@ -1,4 +1,5 @@
 const Role = require('../models').Role;
+const UserRole = require('../models').user_role;
 
 module.exports = {
     create(req, res) {
@@ -20,36 +21,34 @@ module.exports = {
     },
     update(req, res) {
         return Role
-        .find({where: {id: req.params.id}})
-        .then((role) => {
-            if(!role){
-                return res.status(400).send({
-                    message:'Role not found',
-                });
-            }
-            return role
-            .update({
-                name: req.body.name,
-                description: req.body.description,
-                active: req.body.active
+            .find({ where: { id: req.params.id } })
+            .then((role) => {
+                if (!role) {
+                    return res.status(400).send({
+                        message: 'Role not found',
+                    });
+                }
+                return role
+                    .update({
+                        name: req.body.name,
+                        description: req.body.description,
+                        active: req.body.active
+                    })
+                res.status(200).send(role);
             })
-            res.status(200).send(role);
-        })
-        .catch(error => res.status(400).send(error));
+            .catch(error => res.status(400).send(error));
     },
     remove(req, res) {
         return Role
-        .find({where: {id: req.params.id}})
-        .then(role => {
-            if(!role){
-                return res.status(400).send({
-                    message:'Role not found',
-                });
-            }
-            return role
-            .destroy()
+            .find({ where: { id: req.params.id } })
+            .then(role => {
+                if (role) {
+                    UserRole.destroy({ where: { userId: user.id } })
+                        .then(role.destroy())
+                        .catch(error => res.status(400).send(error));
+                }
+            })
             .then(() => res.status(204).send())
             .catch(error => res.status(400).send(error));
-        })
     },
 };

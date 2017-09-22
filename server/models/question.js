@@ -26,9 +26,31 @@ Question.associate = function (models) {
     as: 'type',
     onDelete: 'cascade'
   });
-  // Question.belongsToMany(models.Category, {
-  //   through: 'question_category',
-  //   as: 'category',
+  Question.belongsToMany(models.Category, {
+    through: 'question_categories',
+    as: 'category',
+    onDelete: 'cascade'
+  });
+  Question.belongsToMany(models.QuestionLibrary, {
+    through: 'questionlibrary_question',
+    as: 'questionlibrary',
+    onDelete: 'cascade'
+  });
+  Question.associate = function(models) {
+    Question.belongsToMany(models.Answer, {
+      through: 'question_answers',
+      as: 'answer',
+      onDelete: 'cascade'
+    });
+  }
+  // Question.belongsToMany(models.Question, {
+  //   through: 'question_child',
+  //   as: 'parent',
+  //   onDelete: 'cascade'
+  // });
+  // Question.belongsToMany(models.Question, {
+  //   through: 'question_child',
+  //   as: 'child',
   //   onDelete: 'cascade'
   // });
 }

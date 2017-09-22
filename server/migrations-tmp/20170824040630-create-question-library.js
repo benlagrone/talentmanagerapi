@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: function(queryInterface, Sequelize) {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('QuestionLibraries', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -11,22 +11,10 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
-      email: {
+      description: {
         type: Sequelize.STRING
       },
-      firstname: {
-        type: Sequelize.STRING
-      },
-      lastname: {
-        type: Sequelize.STRING
-      },
-      phone1: {
-        type: Sequelize.STRING
-      },
-      phone2: {
-        type: Sequelize.STRING
-      },
-      preferredcontact: {
+      source: {
         type: Sequelize.STRING
       },
       active: {
@@ -40,9 +28,27 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
+      // QuestionId: {
+      //   type: Sequelize.INTEGER,
+      //   onDelete: 'CASCADE',
+      //   references: {
+      //     model: 'Questions',
+      //     key: 'id',
+      //     as: 'questionId',
+      //   },
+      // },
+      // UserId: {
+      //   type: Sequelize.INTEGER,
+      //   onDelete: 'CASCADE',
+      //   references: {
+      //     model: 'Users',
+      //     key: 'id',
+      //     as: 'userId',
+      //   },
+      // },
     });
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('User');
+    return queryInterface.dropTable('QuestionLibraries');
   }
 };

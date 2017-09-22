@@ -1,11 +1,12 @@
 const Question = require('../models').Question;
-// const User = require('../models').User;
-// const Type = require('../models').Type;
-// const Category = require('../models').Category;
 const QuestionType = require('../models').question_type;
 const QuestionCategory = require('../models').question_category;
+const QuestionQuestionLibrary = require('../models').question_questionlibrary;
 const QuestionUser = require('../models').question_user;
-var models = [Question, QuestionType, QuestionCategory, QuestionUser];
+const QuestionChild = require('../models').question_child;
+const QuestionAnswer = require('../models').question_answer;
+const QuestionAnswerA = require('../models').question_answer_a;
+var models = [Question, QuestionType, QuestionCategory, QuestionUser, QuestionQuestionLibrary, QuestionAnswer, QuestionAnswerA];
 
 module.exports = {
     create(req, res) {
@@ -41,9 +42,39 @@ module.exports = {
                         })
                     })
                 }
+                if (req.body.questionlibraries) {
+                    req.body.questionlibraries.forEach((questionlibrary) => {
+                        QuestionQuestionLibrary.create({
+                            questionId: question.dataValues.id,
+                            questionLibraryId: questionlibrary
+                        })
+                    })
+                }
+                if (req.body.answers) {
+                    req.body.answers.forEach((answer) => {
+                        QuestionAnswer.create({
+                            questionId: question.dataValues.id,
+                            answerId: answer
+                        })
+                    })
+                }
+                if (req.body.answer) {
+                    req.body.answer.forEach((answer_a) => {
+                        QuestionAnswerA.create({
+                            questionId: question.dataValues.id,
+                            answerId: answer_a
+                        })
+                    })
+                }
             })
             .then(question => res.status(201).send(question))
             .catch(error => res.status(400).send(error));
+    },
+    listIds(req, res) {
+        return Question.findAll()
+        .then((question) => {
+            res.status(200).send(question);
+        })
     },
     list(req, res) {
         Promise.all(models.map(function (Question) {
@@ -69,6 +100,29 @@ module.exports = {
                     const users = user.map((b) => b.userId);
                     question.user = users;
 
+                    const resultsquestionlibraries = results[4].map((d) => d.dataValues);
+                    console.log('resultsquestionlibraries', resultsquestionlibraries)
+                    const questionlibrary = resultsquestionlibraries.filter((r) => { 
+                        return parseInt(r.questionId) === result.dataValues.id
+                    });
+                    const questionlibraries = questionlibrary.map((b) => b.questionLibraryId);
+                    question.questionlibrary = questionlibraries.map((q) => parseInt(q));
+
+                    const resultsanswer = results[5].map((d) => d.dataValues);
+                    const answer = resultsanswer.filter((r) => { return r.questionId === result.dataValues.id });
+                    const answers = answer.map((b) => b.answerId);
+                    question.answers = answers;
+
+                    // const resultfamily = results[5].map((d) => d.dataValues);
+                    // const child = resultfamily.filter((r) => { return r.questionParentId === result.dataValues.id });
+                    // const children = child.map((b) => b.userId);
+                    // question.children = children;
+
+                    // // const resultchild = results[5].map((d) => d.dataValues);
+                    // const parent = resultfamily.filter((r) => { return r.questionChildId === result.dataValues.id });
+                    // const parents = parent.map((b) => b.userId);
+                    // question.parents = parents;
+
                     response.push(question);
                 });
                 res.send(200, response)
@@ -84,16 +138,11 @@ module.exports = {
                     });
                 }
                 return question
-                    .update({
-                        name: req.body.name,
+                    .update({        
+                        description: req.body.description,
+                        questiontext: req.body.questiontext,
                         active: req.body.active,
-                        email: req.body.email,
-                        firstname: req.body.firstname,
-                        lastname: req.body.lastname,
-                        phone1: req.body.phone1,
-                        phone2: req.body.phone2,
-                        preferredcontact: req.body.preferredcontact,
-                        // role: req.body.roles
+                        weight: req.body.weight
                     })
                     .then((question) => {
                         console.log(req.body)
@@ -131,15 +180,10 @@ module.exports = {
             .then(question => {
                 if (question) {
                     QuestionType.destroy({ where: { questionId: question.id } })
-                        .then(
-                        QuestionCategory.destroy({ where: { questionId: question.id } })
-                        )
-                        .then(
-                        QuestionUser.destroy({ where: { questionId: question.id } })
-                        )
-                        .then(
-                        question.destroy()
-                        )
+                        .then(QuestionCategory.destroy({ where: { questionId: question.id } }))
+                        .then(QuestionUser.destroy({ where: { questionId: question.id } }))
+                        .then(QuestionQuestionLibrary.destroy({ where: { questionlibraryId: question.id } }))
+                        .then(question.destroy())
                         .catch(error => res.status(400).send(error))
                 }
             })
