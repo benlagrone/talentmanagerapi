@@ -1,6 +1,6 @@
 const Answer = require('../models').Answer;
 const QuestionAnswer = require('../models').question_answer;
-const QuestionAnswerA = require('../models').question_answer_a;
+const QuestionAnswerC = require('../models').question_answer_c;
 
 module.exports = {
     create(req, res) {

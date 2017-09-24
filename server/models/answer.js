@@ -20,5 +20,12 @@ module.exports = function (sequelize, DataTypes) {
       onDelete: 'cascade'
     });
   }
+  Answer.associate = function(models) {
+    Answer.belongsToMany(models.Question, {
+      through: 'question_answer_as',
+      as: 'question',
+      onDelete: 'cascade'
+    });
+  }
   return Answer;
 };

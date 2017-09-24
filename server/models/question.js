@@ -43,6 +43,13 @@ Question.associate = function (models) {
       onDelete: 'cascade'
     });
   }
+  Question.associate = function(models) {
+    Question.belongsToMany(models.Answer, {
+      through: 'question_answer_as',
+      as: 'answer_a',
+      onDelete: 'cascade'
+    });
+  }
   // Question.belongsToMany(models.Question, {
   //   through: 'question_child',
   //   as: 'parent',
