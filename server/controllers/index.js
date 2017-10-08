@@ -1,5 +1,5 @@
 const answers = require('./answers');
-// const assessments = require('./assessments');
+const assessments = require('./assessments');
 const categories = require('./categories');
 const groups = require('./groups');
 const questionlibraries = require('./questionlibraries');
@@ -10,7 +10,7 @@ const users = require('./users');
 
 module.exports = {
   answers,
-  // assessments,
+  assessments,
   categories,
   groups,
   questionlibraries,

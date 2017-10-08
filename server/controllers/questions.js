@@ -7,6 +7,7 @@ const QuestionChild = require('../models').question_child;
 const QuestionAnswer = require('../models').question_answer;
 const QuestionAnswerC = require('../models').question_answer_c;
 var models = [Question, QuestionType, QuestionCategory, QuestionUser, QuestionQuestionLibrary, QuestionAnswer, QuestionAnswerC];
+var QuestionsByLibModels = [Question, QuestionQuestionLibrary];
 
 module.exports = {
     create(req, res) {
@@ -76,6 +77,22 @@ module.exports = {
             res.status(200).send(question);
         })
     },
+    listByLibs(req, res){
+        Promise.all(QuestionsByLibModels.map((QuestionsByLibrary) => {
+            return QuestionsByLibrary.findAll()
+        }))
+        .then((results) => {
+            let questionList = results[1].filter((q)=>{
+                return req.body.indexOf(parseInt(q.dataValues.questionLibraryId))!==-1;
+            })
+            let questionIds = questionList.map((q) => parseInt(q.dataValues.questionId));
+            let questionsData = results[0].filter((q)=>{
+                return questionIds.indexOf(parseInt(q.dataValues.id))!==-1;
+            })
+            let questions = questionsData.map((q)=>q.dataValues)
+            res.status(200).send(questions);
+        })
+    },
     list(req, res) {
         Promise.all(models.map(function (Question) {
             return Question.findAll()
@@ -114,13 +131,13 @@ module.exports = {
                     question.answers = answers;
 
                     const resultsanswerc = results[6].map((d) => d.dataValues);
-                    console.log('resultsanswerc', typeof parseInt(resultsanswerc[0].questionId));
-                    console.log('result', typeof result.dataValues.id);
+                    // console.log('resultsanswerc', typeof parseInt(resultsanswerc[0].questionId));
+                    // console.log('result', typeof result.dataValues.id);
                     const answerc = resultsanswerc.filter((r) => { 
                         return parseInt(r.questionId) === result.dataValues.id
                     });
                     const answersc = answerc.map((b) => parseInt(b.answerId));
-                    question.answersc = answersc;
+                    question.answer = answersc;
 
                     // const resultfamily = results[5].map((d) => d.dataValues);
                     // const child = resultfamily.filter((r) => { return r.questionParentId === result.dataValues.id });
@@ -155,7 +172,7 @@ module.exports = {
                     })
                     .then((question) => {
                         return QuestionType
-                            .findAll({ where: { questionId: question.id } })
+                            .findAll({ where: { questionId: req.params.id } })
                             .then((questiontypes) => {
                                 return questiontypes.forEach((questiontype) => {
                                     questiontype.destroy();
@@ -176,7 +193,7 @@ module.exports = {
                     })
                     .then((question) => {
                         return QuestionCategory
-                            .findAll({ where: { questionId: question.id } })
+                            .findAll({ where: { questionId: req.params.id } })
                             .then((questioncategories) => {
                                 return questioncategories.forEach((questioncategory) => {
                                     questioncategory.destroy();
@@ -197,9 +214,11 @@ module.exports = {
                     })
                     .then((question) => {
                         return QuestionQuestionLibrary
-                            .findAll({ where: { questionId: question.id } })
+                            .findAll({ where: { questionId: req.params.id } })
                             .then((questionquestionlibraries) => {
+                                // console.log('questionquestionlibraries', questionquestionlibraries);
                                 return questionquestionlibraries.forEach((questionquestionlibrary) => {
+                                    console.log('questionquestionlibrary', questionquestionlibrary)
                                     questionquestionlibrary.destroy();
                                 });
 
@@ -207,10 +226,11 @@ module.exports = {
                             .then(() => {
                                 if (req.body.questionlibrary) {
                                     return req.body.questionlibrary.forEach((questionlibrary) => {
+                                        console.log('questionlibrary', questionlibrary);
                                         return QuestionQuestionLibrary
                                             .create({
                                                 questionId: req.params.id,
-                                                questionlibraryId: questionlibrary
+                                                questionLibraryId: questionlibrary
                                             })
                                     })
                                 }
@@ -218,7 +238,7 @@ module.exports = {
                     })
                     .then((question) => {
                         return QuestionUser
-                            .findAll({ where: { questionId: question.id } })
+                            .findAll({ where: { questionId: req.params.id } })
                             .then((questionusers) => {
                                 return questionusers.forEach((questionuser) => {
                                     questionuser.destroy();
@@ -239,7 +259,7 @@ module.exports = {
                     })
                     .then((question) => {
                         return QuestionAnswer
-                            .findAll({ where: { questionId: question.id } })
+                            .findAll({ where: { questionId: req.params.id } })
                             .then((questionanswers) => {
                                 return questionanswers.forEach((questionanswer) => {
                                     questionanswer.destroy();
@@ -260,7 +280,7 @@ module.exports = {
                     })
                     .then((question) => {
                         return QuestionAnswerC
-                            .findAll({ where: { questionId: question.id } })
+                            .findAll({ where: { questionId: req.params.id } })
                             .then((questionanswers) => {
                                 return questionanswers.forEach((questionanswer) => {
                                     questionanswer.destroy();
@@ -269,6 +289,7 @@ module.exports = {
                             })
                             .then(() => {
                                 if (req.body.answer) {
+                                    console.log('req.body.answer', req.body.answer)
                                     return req.body.answer.forEach((answer) => {
                                         return QuestionAnswerC
                                             .create({
@@ -277,9 +298,14 @@ module.exports = {
                                             })
                                     })
                                 }
-                            });
+                            })
+                            
                     })
-                res.status(200).send(question);
+        
+            })
+            .then((question)=>{
+                console.log('response', question)
+                return res.status(200).send(question);
             })
             .catch(error => {
                 console.log('the error', error)

@@ -1,6 +1,7 @@
 const Answer = require('../models').Answer;
 const QuestionAnswer = require('../models').question_answer;
 const QuestionAnswerC = require('../models').question_answer_c;
+var QuestionAnswerModels = [Answer, QuestionAnswer, QuestionAnswerC];
 
 module.exports = {
     create(req, res) {
@@ -17,6 +18,46 @@ module.exports = {
             .all()
             .then(answer => res.status(200).send(answer))
             .catch(error => res.status(400).send(error));
+    },
+    listByQuestionIds(req, res) {
+        Promise.all(QuestionAnswerModels.map(AnswersByQuestion => {
+            return AnswersByQuestion.findAll()
+        }))
+            .then((results) => {
+                let answerList = results[1].filter((a) => {
+                    return req.body.indexOf(parseInt(a.dataValues.questionId));
+                })
+                let answerIds = answerList.map((a) => a.dataValues)
+                let answerCList = results[2].filter((c)=>{
+                    return req.body.indexOf(parseInt(c.dataValues.questionId));
+                })
+                let answerCIds = answerCList.map((c)=>c.dataValues);
+                let questionAnswersArray = [];
+                req.body.forEach((q) => {
+                    let questionObject = {}
+                    questionObject.questionId = q;
+                    questionObject.answersPerQuestion = [];
+                    answerIds.forEach((a) => {
+                        if (q === a.questionId) {
+                            let answersText = results[0].map(c => c.dataValues)
+                            let answerText = answersText.filter((t) => t.id === a.answerId)
+                            a.answerText = answerText[0].answertext;
+                            a.correct = false;
+                            answerCIds.forEach((c) => {
+                                if (q === parseInt(c.questionId)) {
+                                    if(parseInt(a.answerId)===parseInt(c.answerId)){
+                                        a.correct=true;
+                                    }
+                                }
+                            })
+                            questionObject.answersPerQuestion.push(a);
+                        }
+                    });
+                    questionAnswersArray.push(questionObject);
+                });
+                res.status(200).send(questionAnswersArray);
+            })
+
     },
     update(req, res) {
         return Answer
@@ -42,7 +83,7 @@ module.exports = {
             .then(answer => {
                 if (answer) {
                     QuestionAnswer.destroy({ where: { answerId: answer.id } })
-                        .then(QuestionAnswerA.destroy({ where: { answerId: answer.id } }))
+                        .then(QuestionAnswerC.destroy({ where: { answerId: answer.id } }))
                         .then(answer.destroy())
                         .catch(error => res.status(400).send(error));
                 }
