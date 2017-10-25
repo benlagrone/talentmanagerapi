@@ -78,6 +78,7 @@ module.exports = {
         })
     },
     listByLibs(req, res){
+        console.log('req', req.body)
         Promise.all(QuestionsByLibModels.map((QuestionsByLibrary) => {
             return QuestionsByLibrary.findAll()
         }))

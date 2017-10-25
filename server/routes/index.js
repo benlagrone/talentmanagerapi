@@ -33,7 +33,8 @@ module.exports = (app) => {
   app.get('/api/roles', rolesController.list);
   app.get('/api/types', typesController.list);
   app.get('/api/users', usersController.list);
-
+  app.get('/api/answers/answersbyquestionid/:id', answersController.listByQuestionId)
+// http://localhost:8000/api/answers/answersbyquestionid/23
   app.put('/api/answers/:id', answersController.update);
   app.put('/api/assessments/:id', assessmentsController.update);
   app.put('/api/categories/:id', categoriesController.update);
