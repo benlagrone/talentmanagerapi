@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "benjaminlagrone",
+    "username": "talentmgr",
     "password": "S0up3rm4n",
-    "database": "talentmgr-dev",
-    "host": "127.0.0.1",
+    "database": "talentmgr20171030",
+    "host": "talentmgr20171030.postgres.database.azure.com",
     "port": 5432,
     "dialect": "postgres"
   },
@@ -11,7 +11,7 @@
     "username": "talentmgr",
     "password": "S0up3rm4n",
     "database": "talentmgr20171030",
-    "host": "talentmgr20171030",
+    "host": "talentmgr20171030.postgres.database.azure.com",
     "port": 5432,
     "dialect": "postgres"
   },
@@ -19,7 +19,7 @@
     "username": "talentmgr",
     "password": "S0up3rm4n",
     "database": "talentmgr20171030",
-    "host": "talentmgr20171030",
+    "host": "talentmgr20171030.postgres.database.azure.com",
     "port": 5432,
     "dialect": "postgres"
   }
