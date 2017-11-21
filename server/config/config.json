@@ -1,29 +1,44 @@
 {
   "development": {
     "username": "talentmgr@talentmgr20171030",
-    "password": "S0up3rm4n",
-    "database": "talentmgr20171030",
+    "password": "W@rlord12",
+    "database": "talentmgr-dev",
     "host": "talentmgr20171030.postgres.database.azure.com",
     "port": 5432,
     "ssl": true,
+    "dialectOptions":{
+       "ssl":{
+          "require":true
+       }
+    },
     "dialect": "postgres"
   },
   "test": {
     "username": "talentmgr@talentmgr20171030",
-    "password": "S0up3rm4n",
-    "database": "talentmgr20171030",
+    "password": "W@rlord12",
+    "database": "talentmgr-dev",
     "host": "talentmgr20171030.postgres.database.azure.com",
     "port": 5432,
     "ssl": true,
+    "dialectOptions":{
+       "ssl":{
+          "require":true
+       }
+    },
     "dialect": "postgres"
   },
   "production": {
     "username": "talentmgr@talentmgr20171030",
-    "password": "S0up3rm4n",
-    "database": "talentmgr20171030",
+    "password": "W@rlord12",
+    "database": "talentmgr-dev",
     "host": "talentmgr20171030.postgres.database.azure.com",
     "port": 5432,
     "ssl": true,
+    "dialectOptions":{
+       "ssl":{
+          "require":true
+       }
+    },
     "dialect": "postgres"
   }
 }
